@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 )
 
 func main() {
@@ -41,9 +42,12 @@ func pathForBoxPath(boxPath string) (string, bool) {
 	}
 
 	if path.IsAbs(boxPath) {
-		boxPath = boxPath
+		boxPath, err = filepath.Rel(pwd, boxPath)
 	} else {
-		boxPath = path.Join(pwd, boxPath)
+		boxPath, err = filepath.Rel(pwd,path.Join(pwd, boxPath))
+	}
+	if err != nil{
+		fmt.Printf("error making relative path: %s\n", err)
 	}
 
 	result, err := exists(boxPath)

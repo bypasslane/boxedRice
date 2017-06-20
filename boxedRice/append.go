@@ -65,6 +65,7 @@ func operationAppend(boxPaths map[string]bool) {
 
 		// walk box path's and insert files
 		boxPath := filepath.Clean(boxname)
+		verbosef("appendedBoxName: %q\nboxPath:%q", appendedBoxName, boxPath)
 		filepath.Walk(boxPath, func(path string, info os.FileInfo, err error) error {
 			if info == nil {
 				fmt.Printf("Error: box \"%s\" not found on disk\n", path)
