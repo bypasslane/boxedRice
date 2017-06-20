@@ -1,4 +1,4 @@
-package rice
+package boxedRice
 
 import (
 	"bytes"
@@ -14,10 +14,6 @@ type File struct {
 
 	// real file on disk
 	realF *os.File
-
-	// when embedded (go)
-	virtualF *virtualFile
-	virtualD *virtualDir
 
 	// when appended (zip)
 	appendedF          *appendedFile
@@ -35,12 +31,7 @@ func (f *File) Close() error {
 		f.appendedFileReader = nil
 		return nil
 	}
-	if f.virtualF != nil {
-		return f.virtualF.close()
-	}
-	if f.virtualD != nil {
-		return f.virtualD.close()
-	}
+
 	return f.realF.Close()
 }
 
@@ -56,12 +47,7 @@ func (f *File) Stat() (os.FileInfo, error) {
 		}
 		return f.appendedF.zipFile.FileInfo(), nil
 	}
-	if f.virtualF != nil {
-		return f.virtualF.stat()
-	}
-	if f.virtualD != nil {
-		return f.virtualD.stat()
-	}
+
 	return f.realF.Stat()
 }
 
@@ -83,12 +69,7 @@ func (f *File) Readdir(count int) ([]os.FileInfo, error) {
 		//++ TODO: is os.ErrInvalid the correct error for Readdir on file?
 		return nil, os.ErrInvalid
 	}
-	if f.virtualF != nil {
-		return f.virtualF.readdir(count)
-	}
-	if f.virtualD != nil {
-		return f.virtualD.readdir(count)
-	}
+
 	return f.realF.Readdir(count)
 }
 
@@ -112,12 +93,7 @@ func (f *File) Read(bts []byte) (int, error) {
 		}
 		return f.appendedFileReader.Read(bts)
 	}
-	if f.virtualF != nil {
-		return f.virtualF.read(bts)
-	}
-	if f.virtualD != nil {
-		return f.virtualD.read(bts)
-	}
+
 	return f.realF.Read(bts)
 }
 
@@ -134,11 +110,6 @@ func (f *File) Seek(offset int64, whence int) (int64, error) {
 		}
 		return f.appendedFileReader.Seek(offset, whence)
 	}
-	if f.virtualF != nil {
-		return f.virtualF.seek(offset, whence)
-	}
-	if f.virtualD != nil {
-		return f.virtualD.seek(offset, whence)
-	}
+
 	return f.realF.Seek(offset, whence)
 }

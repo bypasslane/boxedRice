@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"go/build"
 	"os"
 
 	goflags "github.com/jessevdk/go-flags" // rename import to `goflags` (file scope) so we can use `var flags` (package scope)
@@ -10,21 +9,12 @@ import (
 
 // flags
 var flags struct {
-	Verbose     bool     `long:"verbose" short:"v" description:"Show verbose debug information"`
-	ImportPaths []string `long:"import-path" short:"i" description:"Import path(s) to use. Using PWD when left empty. Specify multiple times for more import paths to append"`
+	Verbose bool `long:"verbose" short:"v" description:"Show verbose debug information"`
 
 	Append struct {
-		Executable string `long:"exec" description:"Executable to append" required:"true"`
-	} `command:"append"`
-
-	AppendSimple struct {
-		BoxPath []string `long:"box-path" short:"b" description:"Box path(s) to use. Bypasses code parsing to enable simpler use of boxes. Ignores import-path. Specify multiple times for more box paths to append" required:"true"`
-		Executable string `long:"exec" description:"Executable to append" required:"true"`
+		BoxPath    []string `long:"box-path" short:"b" description:"Box path(s) to use. Bypasses code parsing to enable simpler use of boxes. Ignores import-path. Specify multiple times for more box paths to append" required:"true"`
+		Executable string   `long:"exec" description:"Executable to append" required:"true"`
 	} `command:"append-simple"`
-
-	EmbedGo   struct{} `command:"embed-go" alias:"embed"`
-	EmbedSyso struct{} `command:"embed-syso"`
-	Clean     struct{} `command:"clean"`
 }
 
 // flags parser
@@ -64,22 +54,4 @@ func parseArguments() {
 		os.Exit(1)
 	}
 
-	// default ImportPath to pwd when not set
-	if len(flags.ImportPaths) == 0 {
-		pwd, err := os.Getwd()
-		if err != nil {
-			fmt.Printf("error getting pwd: %s\n", err)
-			os.Exit(1)
-		}
-		verbosef("using pwd as import path\n")
-		// find non-absolute path for this pwd
-		pkg, err := build.ImportDir(pwd, build.FindOnly)
-		if err != nil {
-			fmt.Printf("error using current directory as import path: %s\n", err)
-			os.Exit(1)
-		}
-		flags.ImportPaths = append(flags.ImportPaths, pkg.ImportPath)
-		verbosef("using import paths: %s\n", flags.ImportPaths)
-		return
-	}
 }

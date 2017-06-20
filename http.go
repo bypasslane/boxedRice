@@ -1,4 +1,4 @@
-package rice
+package boxedRice
 
 import (
 	"net/http"

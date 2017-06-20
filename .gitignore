@@ -1,9 +1,7 @@
 /example/example
 /example/example.exe
-/boxedRice/rice
-/boxedRice/rice.exe
+/boxedRice/boxedRice
+/boxedRice/boxedRice.exe
 /.idea
 
-*.rice-box.go
-*.rice-box.syso
 .wercker

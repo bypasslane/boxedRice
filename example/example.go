@@ -8,17 +8,17 @@ import (
 	"os"
 	"text/template"
 
-	"github.com/GeertJohan/go.rice"
+	"github.com/bypasslane/boxedRice"
 	"github.com/davecgh/go-spew/spew"
 )
 
 func main() {
-	conf := rice.Config{
-		LocateOrder: []rice.LocateMethod{rice.LocateEmbedded, rice.LocateAppended, rice.LocateFS},
+	conf := boxedRice.Config{
+		LocateOrder: []boxedRice.LocateMethod{ boxedRice.LocateAppended, boxedRice.LocateFS},
 	}
 	box, err := conf.FindBox("example-files")
 	if err != nil {
-		log.Fatalf("error opening rice.Box: %s\n", err)
+		log.Fatalf("error opening boxedRice.Box: %s\n", err)
 	}
 	// spew.Dump(box)
 
@@ -40,8 +40,8 @@ func main() {
 	}
 	spew.Dump(file)
 
-	// find/create a rice.Box
-	templateBox, err := rice.FindBox("example-templates")
+	// find/create a boxedRice.Box
+	templateBox, err := boxedRice.FindBox("example-templates")
 	if err != nil {
 		log.Fatal(err)
 	}

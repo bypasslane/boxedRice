@@ -13,7 +13,7 @@ boxedRice is a [Go](http://golang.org) package that makes working with resources
 ### What does it do?
 The first thing boxedRice does is finding the correct absolute path for your resource files. Say you are executing go binary in your home directory, but your `html-files` are located in `$GOPATH/src/yourApplication/html-files`. `boxedRice` will lookup the correct path for that directory (relative to the location of yourApplication). The only thing you have to do is include the resources using `boxedRice.FindBox("html-files")`.
 
-This only works when the source is available to the machine executing the binary. Which is always the case when the binary was installed with `go get` or `go install`. It might occur that you wish to simply provide a binary, without source. The `boxedRice` tool analyses source code and finds call's to `boxedRice.FindBox(..)` and adds the required directories to the executable binary. There are several methods to add these resources. You can 'embed' by generating go source code, or append the resource to the executable as zip file. In both cases `boxedRice` will detect the embedded or appended resources and load those, instead of looking up files from disk.
+This only works when the source is available to the machine executing the binary. Which is always the case when the binary was installed with `go get` or `go install`. It might occur that you wish to simply provide a binary, without source. The `boxedRice` tool provides the `append` command to append items to the binary as a zip. `boxedRice` will detect the appended resources and load those, instead of looking up files from disk.
 
 ### Installation
 
@@ -27,9 +27,9 @@ go get github.com/bypasslane/boxedRice/boxedRice
 
 Import the package: `import "github.com/bypasslane/boxedRice"`
 
-**Serving a static content folder over HTTP with a rice Box**
+**Serving a static content folder over HTTP with a boxedRice Box**
 ```go
-http.Handle("/", http.FileServer(rice.MustFindBox("http-files").HTTPBox()))
+http.Handle("/", http.FileServer(boxedRice.MustFindBox("http-files").HTTPBox()))
 http.ListenAndServe(":8080", nil)
 ```
 
@@ -68,7 +68,7 @@ tmplMessage.Execute(os.Stdout, map[string]string{"Message": "Hello, world!"})
 Never call `FindBox()` or `MustFindBox()` from an `init()` function, as the boxes might have not been loaded at that time.
 
 ### Tool usage
-The `boxedRice` tool lets you add the resources to a binary executable so the files are not loaded from the filesystem anymore. This creates a 'standalone' executable. There are several ways to add the resources to a binary, each has pro's and con's but all will work without requiring changes to the way you load the resources.
+The `boxedRice` tool lets you add the resources to a binary executable so the files are not loaded from the filesystem anymore. This creates a 'standalone' executable. 
 
 #### append
 **Append resources to executable as zip file**
@@ -80,7 +80,7 @@ Downsides for appending are that it requires `zip` to be installed and does not 
 Run the following commands to create a standalone executable.
 ```
 go build -o example
-boxedRice append --exec example
+boxedRice append -b example/example-files --exec example
 ```
 
 **Note: requires zip command to be installed**
@@ -95,7 +95,6 @@ You can run the -h option for each sub-command, e.g. `boxedRice append -h`.
 ### Order of precedence
 When opening a new box, the boxedRice package tries to locate the resources in the following order:
 
- - embedded in generated go source
  - appended as zip
  - 'live' from filesystem
 
@@ -104,18 +103,11 @@ When opening a new box, the boxedRice package tries to locate the resources in t
 This project is licensed under a Simplified BSD license. Please read the [LICENSE file][license].
 
 ### TODO & Development
-This package is not completed yet. Though it already provides working embedding, some important featuers are still missing.
- - implement Readdir() correctly on virtualDir
- - in-code TODO's
- - find boxes in imported packages
-
-Less important stuff:
- - idea, os/arch dependent embeds. boxedRice checks if embedding file has _os_arch or build flags. If box is not requested by file without buildflags, then the buildflags are applied to the embed file.
+This package is not completed yet. Though it already provides working appending, there are some refinements to be made. These are noted in code as `TODO` comments.
 
 ### Package documentation
 
 You will find package documentation at [godoc.org/github.com/bypasslane/boxedRice][godoc].
-
 
  [license]: https://github.com/bypasslane/boxedRice/blob/master/LICENSE
  [godoc]: http://godoc.org/github.com/bypasslane/boxedRice

@@ -1,4 +1,4 @@
-package rice
+package boxedRice
 
 import (
 	"os"
@@ -22,7 +22,7 @@ func (b *Box) Walk(path string, walkFn filepath.WalkFunc) error {
 		return err
 	}
 
-	if b.IsAppended() || b.IsEmbedded() {
+	if b.IsAppended() {
 		return b.walk(path, pathInfo, walkFn)
 	}
 

@@ -1,4 +1,4 @@
-package rice
+package boxedRice
 
 import (
 	"archive/zip"
@@ -26,7 +26,7 @@ type appendedFile struct {
 	content  []byte
 }
 
-// appendedBoxes is a public register of appendes boxes
+// appendedBoxes is a public register of appended boxes
 var appendedBoxes = make(map[string]*appendedBox)
 
 func init() {

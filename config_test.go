@@ -1,23 +1,18 @@
-package rice
+package boxedRice
 
 import (
 	"fmt"
 	"io/ioutil"
 	"testing"
-
-	"github.com/bypasslane/boxedRice/embedded"
 )
 
 // For all test code in this package, define a set of test boxes.
-var eb1 *embedded.EmbeddedBox
 var ab1, ab2 *appendedBox
 var fsb1, fsb2, fsb3 string // paths to filesystem boxes
 func init() {
 	var err error
 
 	// Box1 exists in all three locations.
-	eb1 = &embedded.EmbeddedBox{Name: "box1"}
-	embedded.RegisterEmbeddedBox(eb1.Name, eb1)
 	ab1 = &appendedBox{Name: "box1"}
 	appendedBoxes["box1"] = ab1
 	fsb1, err = ioutil.TempDir("", "box1")
@@ -59,9 +54,6 @@ func TestDefaultLookupOrder(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Expected to find box1, got error: %v", err)
 	}
-	if b.embed != eb1 {
-		t.Fatalf("Expected to find embedded box, but got %#v", b)
-	}
 
 	// Box2 exists in appended and FS, so find the appended.
 	b2, err := FindBox("box2")
@@ -83,7 +75,7 @@ func TestDefaultLookupOrder(t *testing.T) {
 }
 
 func TestConfigLocateOrder(t *testing.T) {
-	cfg := Config{LocateOrder: []LocateMethod{LocateFS, LocateAppended, LocateEmbedded}}
+	cfg := Config{LocateOrder: []LocateMethod{LocateFS, LocateAppended}}
 	fsb := []string{fsb1, fsb2, fsb3}
 	// All 3 boxes have a FS backend, so we should always find that.
 	for i, boxName := range []string{"box1", "box2", "box3"} {
@@ -96,7 +88,7 @@ func TestConfigLocateOrder(t *testing.T) {
 		}
 	}
 
-	cfg.LocateOrder = []LocateMethod{LocateAppended, LocateFS, LocateEmbedded}
+	cfg.LocateOrder = []LocateMethod{LocateAppended, LocateFS}
 	{
 		b, err := cfg.FindBox("box3")
 		if err != nil {
@@ -117,20 +109,20 @@ func TestConfigLocateOrder(t *testing.T) {
 	}
 
 	// What if we don't list all the locate methods?
-	cfg.LocateOrder = []LocateMethod{LocateEmbedded}
-	{
-		b, err := cfg.FindBox("box2")
-		if err == nil {
-			t.Fatalf("Expected not to find box2, but something was found: %#v", b)
-		}
-	}
-	{
-		b, err := cfg.FindBox("box1")
-		if err != nil {
-			t.Fatalf("Expected to find box2, got error: %v", err)
-		}
-		if b.embed != eb1 {
-			t.Fatalf("Expected to find embedded box, but got %#v", b)
-		}
-	}
+	//cfg.LocateOrder = []LocateMethod{LocateEmbedded}
+	//{
+	//	b, err := cfg.FindBox("box2")
+	//	if err == nil {
+	//		t.Fatalf("Expected not to find box2, but something was found: %#v", b)
+	//	}
+	//}
+	//{
+	//	b, err := cfg.FindBox("box1")
+	//	if err != nil {
+	//		t.Fatalf("Expected to find box2, got error: %v", err)
+	//	}
+	//	if b.embed != eb1 {
+	//		t.Fatalf("Expected to find embedded box, but got %#v", b)
+	//	}
+	//}
 }

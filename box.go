@@ -1,4 +1,4 @@
-package rice
+package boxedRice
 
 import (
 	"bytes"
@@ -10,20 +10,17 @@ import (
 	"runtime"
 	"strings"
 	"time"
-
-	"github.com/bypasslane/boxedRice/embedded"
 )
 
 // Box abstracts a directory for resources/files.
-// It can either load files from disk, or from embedded code (when `rice --embed` was ran).
+// It can either load files from disk, or from appended files
 type Box struct {
 	name         string
 	absolutePath string
-	embed        *embedded.EmbeddedBox
 	appendd      *appendedBox
 }
 
-var defaultLocateOrder = []LocateMethod{LocateEmbedded, LocateAppended, LocateFS}
+var defaultLocateOrder = []LocateMethod{LocateAppended, LocateFS}
 
 func findBox(name string, order []LocateMethod) (*Box, error) {
 	b := &Box{name: name}
@@ -37,11 +34,6 @@ func findBox(name string, order []LocateMethod) (*Box, error) {
 	var err error
 	for _, method := range order {
 		switch method {
-		case LocateEmbedded:
-			if embed := embedded.EmbeddedBoxes[name]; embed != nil {
-				b.embed = embed
-				return b, nil
-			}
 
 		case LocateAppended:
 			appendedBoxName := strings.Replace(name, `/`, `-`, -1)
@@ -152,24 +144,14 @@ func (b *Box) resolveAbsolutePathFromWorkingDirectory() error {
 	return nil
 }
 
-// IsEmbedded indicates wether this box was embedded into the application
-func (b *Box) IsEmbedded() bool {
-	return b.embed != nil
-}
-
-// IsAppended indicates wether this box was appended to the application
+// IsAppended indicates weather this box was appended to the application
 func (b *Box) IsAppended() bool {
 	return b.appendd != nil
 }
 
 // Time returns how actual the box is.
-// When the box is embedded, it's value is saved in the embedding code.
 // When the box is live, this methods returns time.Now()
 func (b *Box) Time() time.Time {
-	if b.IsEmbedded() {
-		return b.embed.Time
-	}
-
 	//++ TODO: return time for appended box
 
 	return time.Now()
@@ -180,51 +162,6 @@ func (b *Box) Time() time.Time {
 func (b *Box) Open(name string) (*File, error) {
 	if Debug {
 		fmt.Printf("Open(%s)\n", name)
-	}
-
-	if b.IsEmbedded() {
-		if Debug {
-			fmt.Println("Box is embedded")
-		}
-
-		// trim prefix (paths are relative to box)
-		name = strings.TrimLeft(name, "/")
-		if Debug {
-			fmt.Printf("Trying %s\n", name)
-		}
-
-		// search for file
-		ef := b.embed.Files[name]
-		if ef == nil {
-			if Debug {
-				fmt.Println("Didn't find file in embed")
-			}
-			// file not found, try dir
-			ed := b.embed.Dirs[name]
-			if ed == nil {
-				if Debug {
-					fmt.Println("Didn't find dir in embed")
-				}
-				// dir not found, error out
-				return nil, &os.PathError{
-					Op:   "open",
-					Path: name,
-					Err:  os.ErrNotExist,
-				}
-			}
-			if Debug {
-				fmt.Println("Found dir. Returning virtual dir")
-			}
-			vd := newVirtualDir(ed)
-			return &File{virtualD: vd}, nil
-		}
-
-		// box is embedded
-		if Debug {
-			fmt.Println("Found file. Returning virtual file")
-		}
-		vf := newVirtualFile(ef)
-		return &File{virtualF: vf}, nil
 	}
 
 	if b.IsAppended() {
@@ -303,17 +240,6 @@ func (b *Box) MustBytes(name string) []byte {
 
 // String returns the content of the file with given name as string.
 func (b *Box) String(name string) (string, error) {
-	// check if box is embedded, optimized fast path
-	if b.IsEmbedded() {
-		// find file in embed
-		ef := b.embed.Files[name]
-		if ef == nil {
-			return "", os.ErrNotExist
-		}
-		// return as string
-		return ef.Content, nil
-	}
-
 	bts, err := b.Bytes(name)
 	if err != nil {
 		return "", err
