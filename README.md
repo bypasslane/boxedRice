@@ -1,5 +1,5 @@
 
-## fork
+## Fork
 This is a heavily modified fork of the [go.rice](https://github.com/GeertJohan/go.rice) tool by GeertJohan. We found the rice tool's use of go source parsing excessive for our needs so we developed a smaller and simpler version that would be easy to maintain and still use the useful features go.rice provided. This version simply creates a tool that will import the paths listed as 'boxes' and append them to the executable. 
 
 ## boxedRice
