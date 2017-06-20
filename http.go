@@ -5,7 +5,7 @@ import (
 )
 
 // HTTPBox implements http.FileSystem which allows the use of Box with a http.FileServer.
-//   e.g.: http.Handle("/", http.FileServer(rice.MustFindBox("http-files").HTTPBox()))
+//   e.g.: http.Handle("/", http.FileServer(boxedRice.MustFindBox("http-files").HTTPBox()))
 type HTTPBox struct {
 	*Box
 }

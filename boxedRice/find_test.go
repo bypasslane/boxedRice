@@ -58,11 +58,11 @@ func TestFindOneBox(t *testing.T) {
 			[]byte(`package main
 
 import (
-	"github.com/GeertJohan/go.rice"
+	"github.com/GeertJohan/go.boxedRice"
 )
 
 func main() {
-	rice.MustFindBox("foo")
+	boxedRice.MustFindBox("foo")
 }
 `),
 		},
@@ -88,12 +88,12 @@ func TestFindOneBoxViaVariable(t *testing.T) {
 			[]byte(`package main
 
 import (
-	"github.com/GeertJohan/go.rice"
+	"github.com/GeertJohan/go.boxedRice"
 )
 
 func main() {
-	conf := rice.Config{
-		LocateOrder: []rice.LocateMethod{rice.LocateEmbedded, rice.LocateAppended, rice.LocateFS},
+	conf := boxedRice.Config{
+		LocateOrder: []boxedRice.LocateMethod{boxedRice.LocateEmbedded, boxedRice.LocateAppended, boxedRice.LocateFS},
 	}
 	conf.MustFindBox("foo")
 }
@@ -120,12 +120,12 @@ func TestFindMultipleBoxes(t *testing.T) {
 			[]byte(`package main
 
 import (
-	"github.com/GeertJohan/go.rice"
+	"github.com/GeertJohan/go.boxedRice"
 )
 
 func main() {
-	rice.MustFindBox("foo")
-	rice.MustFindBox("bar")
+	boxedRice.MustFindBox("foo")
+	boxedRice.MustFindBox("bar")
 }
 `),
 		},
@@ -154,8 +154,8 @@ func (fr fakerice) FindBox(s string) {
 }
 
 func main() {
-	rice := fakerice{}
-	rice.FindBox("foo")
+	boxedRice := fakerice{}
+	boxedRice.FindBox("foo")
 }
 `),
 		},
@@ -179,7 +179,7 @@ func TestUnrelatedBoxesAreNotFound(t *testing.T) {
 			[]byte(`package foobar
 
 import (
-	_ "github.com/GeertJohan/go.rice"
+	_ "github.com/GeertJohan/go.boxedRice"
 )
 
 type fakerice struct {}
@@ -192,8 +192,8 @@ func FindBox(s string) {
 }
 
 func LoadBoxes() {
-	rice := fakerice{}
-	rice.FindBox("foo")
+	boxedRice := fakerice{}
+	boxedRice.FindBox("foo")
 
 	FindBox("bar")
 }
@@ -221,7 +221,7 @@ func TestMixGoodAndBadBoxes(t *testing.T) {
 			[]byte(`package foobar
 
 import (
-	_ "github.com/GeertJohan/go.rice"
+	_ "github.com/GeertJohan/go.boxedRice"
 )
 
 type fakerice struct {}
@@ -234,8 +234,8 @@ func FindBox(s string) {
 }
 
 func LoadBoxes1() {
-	rice := fakerice{}
-	rice.FindBox("foo")
+	boxedRice := fakerice{}
+	boxedRice.FindBox("foo")
 
 	FindBox("bar")
 }
@@ -260,11 +260,11 @@ func LoadBoxes2() {
 			[]byte(`package foobar
 
 import (
-	"github.com/GeertJohan/go.rice"
+	"github.com/GeertJohan/go.boxedRice"
 )
 
 func LoadBoxes3() {
-	rice.FindBox("fish")
+	boxedRice.FindBox("fish")
 }
 `),
 		},

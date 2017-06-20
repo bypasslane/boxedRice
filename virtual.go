@@ -7,17 +7,17 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/JonathanTech/go.rice/embedded"
+	"github.com/bypasslane/boxedRice/embedded"
 )
 
-//++ TODO: IDEA: merge virtualFile and virtualDir, this decreases work done by rice.File
+//++ TODO: IDEA: merge virtualFile and virtualDir, this decreases work done by boxedRice.File
 
 // Error indicating some function is not implemented yet (but available to satisfy an interface)
 var ErrNotImplemented = errors.New("not implemented yet")
 
 // virtualFile is a 'stateful' virtual file.
 // virtualFile wraps an *EmbeddedFile for a call to Box.Open() and virtualizes 'read cursor' (offset) and 'closing'.
-// virtualFile is only internally visible and should be exposed through rice.File
+// virtualFile is only internally visible and should be exposed through boxedRice.File
 type virtualFile struct {
 	*embedded.EmbeddedFile       // the actual embedded file, embedded to obtain methods
 	offset                 int64 // read position on the virtual file
@@ -132,7 +132,7 @@ func (vf *virtualFile) seek(offset int64, whence int) (int64, error) {
 
 // virtualDir is a 'stateful' virtual directory.
 // virtualDir wraps an *EmbeddedDir for a call to Box.Open() and virtualizes 'closing'.
-// virtualDir is only internally visible and should be exposed through rice.File
+// virtualDir is only internally visible and should be exposed through boxedRice.File
 type virtualDir struct {
 	*embedded.EmbeddedDir
 	offset int // readdir position on the directory

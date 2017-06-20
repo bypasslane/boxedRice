@@ -4,7 +4,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/JonathanTech/go.rice/embedded"
+	"github.com/bypasslane/boxedRice/embedded"
 )
 
 // re-type to make exported methods invisible to user (godoc)

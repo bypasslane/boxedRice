@@ -476,11 +476,11 @@ func TestEmbedGo(t *testing.T) {
 			[]byte(`package main
 
 import (
-	"github.com/GeertJohan/go.rice"
+	"github.com/GeertJohan/go.boxedRice"
 )
 
 func main() {
-	rice.MustFindBox("foo")
+	boxedRice.MustFindBox("foo")
 }
 `),
 		},

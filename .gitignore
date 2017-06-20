@@ -1,7 +1,7 @@
 /example/example
 /example/example.exe
-/rice/rice
-/rice/rice.exe
+/boxedRice/rice
+/boxedRice/rice.exe
 /.idea
 
 *.rice-box.go

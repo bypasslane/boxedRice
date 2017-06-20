@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/JonathanTech/go.rice/embedded"
+	"github.com/bypasslane/boxedRice/embedded"
 )
 
 // For all test code in this package, define a set of test boxes.

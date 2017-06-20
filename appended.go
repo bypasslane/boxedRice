@@ -81,14 +81,14 @@ func init() {
 				rc, err := af.zipFile.Open()
 				if err != nil {
 					af.content = nil // this will cause an error when the file is being opened or seeked (which is good)
-					// TODO: it's quite blunt to just log this stuff. but this is in init, so rice.Debug can't be changed yet..
+					// TODO: it's quite blunt to just log this stuff. but this is in init, so boxedRice.Debug can't be changed yet..
 					log.Printf("error opening appended file %s: %v", af.zipFile.Name, err)
 				} else {
 					_, err = rc.Read(af.content)
 					rc.Close()
 					if err != nil {
 						af.content = nil // this will cause an error when the file is being opened or seeked (which is good)
-						// TODO: it's quite blunt to just log this stuff. but this is in init, so rice.Debug can't be changed yet..
+						// TODO: it's quite blunt to just log this stuff. but this is in init, so boxedRice.Debug can't be changed yet..
 						log.Printf("error reading data for appended file %s: %v", af.zipFile.Name, err)
 					}
 				}
