@@ -14,7 +14,7 @@ var flags struct {
 	Append struct {
 		BoxPath    []string `long:"box-path" short:"b" description:"Box path(s) to use. Bypasses code parsing to enable simpler use of boxes. Ignores import-path. Specify multiple times for more box paths to append" required:"true"`
 		Executable string   `long:"exec" description:"Executable to append" required:"true"`
-	} `command:"append-simple"`
+	} `command:"append"`
 }
 
 // flags parser
